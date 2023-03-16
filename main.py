@@ -15,7 +15,7 @@ class Handler(FileSystemEventHandler):
 
             # Если является файлом:
             if os.path.isfile(os.path.join(folder_track, filename)) and not filename.startswith('.'):
-                extension = filename.split('.')[-1]  # Получаем расширение файла
+                extension = filename.split('.')[-1].lower()  # Получаем расширение файла
 
                 # Ищем наше расширение:
                 for key, value in file_extensions.items():
@@ -49,45 +49,63 @@ class Handler(FileSystemEventHandler):
 
 
 file_extensions = {
-    'Изображения': ['jpg', 'png', 'bmp', 'gif', 'tif', 'jpeg'],
-    'Документы': ['doc', 'docx'],
-    'Электронные таблицы': ['xls', 'xlsx'],
+    'Изображения': ['jpg', 'png', 'bmp', 'gif', 'tif', 'jpeg', 'ico'],
+    'Документы и электронные таблицы': ['xml', 'xlsx', 'xltx', 'xlt', 'tbl', 'docm', 'docx', 'xls', 'xsl', 'xltm', 'doc'],
     'PDF-документы': ['pdf'],
-    'Тестовый файл': ['txt'],
-    'Архивы': ['zip', 'rar', '7z', 'gzip'],
-    'Аудиофайлы': ['mp3', 'wav', 'midi', 'aac'],
+    'Текстовые файлы': ['txt', 'text', 'tex', 'ttf', 'log', 'sub', 'apt', 'err', 'pwi'],
+    'Архивы': ['zip', 'rar', '7z', 'gzip', 'bin', 'jar'],
+    'Аудиофайлы': ['mp3', 'wav', 'midi', 'aac', 'flac', 'alac', 'aac', 'wav'],
     'Видеофайлы': ['mp4', 'avi', 'mkv', 'wmv', 'flv', 'mpeg', 'mow'],
     'Cтраницы из интернета': ['html', 'htm', 'mht'],
     'Презентации': ['ppt', 'pptx'],
-    'Базы данных': ['mdb', 'accdb'],
-    'Установочные файлы': ['dmg', 'exe', 'pkg'],
-    'ISO-файлы': ['iso'],
+    'Файлы и базы данных': ['sql', 'dat', 'sav', 'mpp', 'csv', 'css', 'db', 'gbr', 'mdb', 'sqlite3', 'accdb', 'nbp', 'db3'],
+    'Установочные файлы': ['dmg', 'exe', 'pkg', 'msi'],
+    'ISO-файлы, файлы образа диска': ['iso', 'gho', 'ghs'],
     'Торрент-файлы': ['torrent'],
     'Сканированные документы(книга, журнал и пр.)': ['djvu'],
     'Электронные книги': ['fb2', 'epub', 'mobi'],
-    'Файлы изображений/проектов Photoshop': ['psd']
+    'Файлы изображений/проектов Photoshop': ['psd'],
+    'Шрифты': ['fnt', 'fon', 'otf', 'ttf'],
+    'Файлы проектов и резервных копий': ['prj', 'v2i', 'sis', 'sav', 'bak', 'dmp'],
+    'JSON-файлы': ['json']
 }
 
-with open('folder_path.json', 'r') as j:
-    login_data = json.load(j)
-    for key, value in login_data.items():
-        if key == "folder_track":
-            folder_track = value
-        elif key == "folder_dest":
-            folder_dest = value
+# Чтение нужных библиотек из файла json
+
+# with open('folder_path.json', 'r+', encoding="utf-8") as j:
+#     login_data = json.load(j)
+#     for key, value in login_data.items():
+#         if key == "folder_track":
+#             folder_track = value
+#         elif key == "folder_dest":
+#             folder_dest = value
+
+
+# Ручная настройка brootforce:
 
 # folder_track = "/Users/pc/Downloads"
 # folder_dest = "/Users/pc/Downloads/Отсортированные файлы"
+
+
+# Ручная настройка в терминале:
+
+folder_track = input("Введите полный путь отслеживаемой папки: \n")
+folder_dest = input("Введите полный путь к папке для отсортированных файлов: \n")
+time.sleep(1)
 
 handle = Handler()
 observer = Observer()
 observer.schedule(handle, folder_track, recursive=True)
 observer.start()
+print('sort is active')
 
 try:
     while True:
         time.sleep(10)
 except KeyboardInterrupt:
+    print("Закрытие программы")
     observer.stop()
 
 observer.join()
+
+# pyinstaller -F --icon=Custom-Icon.ico main.py

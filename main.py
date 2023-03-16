@@ -69,7 +69,7 @@ file_extensions = {
     'Файлы проектов и резервных копий': ['prj', 'v2i', 'sis', 'sav', 'bak', 'dmp'],
     'JSON-файлы': ['json']
 }
-
+##################################
 # Чтение нужных библиотек из файла json
 
 # with open('folder_path.json', 'r+', encoding="utf-8") as j:
@@ -80,19 +80,19 @@ file_extensions = {
 #         elif key == "folder_dest":
 #             folder_dest = value
 
-
+###############################
 # Ручная настройка brootforce:
 
 # folder_track = "/Users/pc/Downloads"
 # folder_dest = "/Users/pc/Downloads/Отсортированные файлы"
 
-
+#################
 # Ручная настройка в терминале:
 
 folder_track = input("Введите полный путь отслеживаемой папки: \n")
 folder_dest = input("Введите полный путь к папке для отсортированных файлов: \n")
 time.sleep(1)
-
+#################
 handle = Handler()
 observer = Observer()
 observer.schedule(handle, folder_track, recursive=True)

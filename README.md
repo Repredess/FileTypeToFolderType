@@ -10,7 +10,7 @@ Also, if you run code on python you can choose folders by 3 different ways:
 3) Just write your addresses in variables: folder_track and folder_dest (brootforce)
 
 IMPORTANT!!!  If you chose the method you need, then comment out the other 2 for correct work.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Простая программа для сортировки ваших файлов по папкам согласно расширениям
 
 Если у Вас не установлен python на ваш компьютер можно воспользоватся exe/unix скриптом которые можно найти в папке: scripts/{твоя_ОС}

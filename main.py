@@ -3,7 +3,7 @@ import os
 import time
 from datetime import datetime
 from watchdog.events import FileSystemEventHandler
-import simplejson as json
+# import simplejson as json
 
 
 class Handler(FileSystemEventHandler):
@@ -12,10 +12,10 @@ class Handler(FileSystemEventHandler):
         for filename in os.listdir(folder_track):
             flag = False
             new_filename = None
+            extension = filename.split('.')[-1].lower()  # Получаем расширение файла
 
             # Если является файлом:
-            if os.path.isfile(os.path.join(folder_track, filename)) and not filename.startswith('.'):
-                extension = filename.split('.')[-1].lower()  # Получаем расширение файла
+            if os.path.isfile(os.path.join(folder_track, filename)) and not filename.startswith('.') and not extension in ['lnk', 'url']:
 
                 # Ищем наше расширение:
                 for key, value in file_extensions.items():
@@ -28,7 +28,7 @@ class Handler(FileSystemEventHandler):
                             os.mkdir(os.path.join(folder_dest, key))
 
                         elif os.path.exists(os.path.join(folder_dest, key, filename)):
-                            new_filename = str(datetime.now())
+                            new_filename = str(datetime.now()).replace('.', '-')
                             os.rename(os.path.join(folder_track, filename), (os.path.join(folder_track, f"{new_filename}.{extension}")))
 
                         if new_filename:
@@ -43,9 +43,12 @@ class Handler(FileSystemEventHandler):
                         break
 
                 if not flag:
-                    file = os.path.join(folder_track, filename)
-                    new_path = os.path.join(folder_dest, filename)
-                    os.rename(file, new_path)
+                    try:
+                        file = os.path.join(folder_track, filename)
+                        new_path = os.path.join(folder_dest, filename)
+                        os.rename(file, new_path)
+                    except FileExistsError:
+                        continue
 
 
 file_extensions = {
@@ -70,9 +73,9 @@ file_extensions = {
     'JSON-файлы': ['json']
 }
 ##################################
-# Чтение нужных библиотек из файла json
+# Чтение нужных путей из json-файла:
 
-# with open('folder_path.json', 'r+', encoding="utf-8") as j:
+# with open('dist/folder_path.json', 'r+', encoding="utf-8") as j:
 #     login_data = json.load(j)
 #     for key, value in login_data.items():
 #         if key == "folder_track":
@@ -89,15 +92,16 @@ file_extensions = {
 #################
 # Ручная настройка в терминале:
 
-folder_track = input("Введите полный путь отслеживаемой папки: \n")
-folder_dest = input("Введите полный путь к папке для отсортированных файлов: \n")
-time.sleep(1)
+print('Пример: C:\\Users\\Repredess\\Downloads')
+folder_track = input("Введите полный путь отслеживаемой папки: \n").lstrip('\\')
+folder_dest = input("Введите полный путь к папке для отсортированных файлов: \n").lstrip('\\')
+
 #################
 handle = Handler()
 observer = Observer()
 observer.schedule(handle, folder_track, recursive=True)
 observer.start()
-print('sort is active')
+print('|sort is active|если сортировка не прошла добавьте любой файл в отслеживаемую папку')
 
 try:
     while True:
@@ -108,4 +112,4 @@ except KeyboardInterrupt:
 
 observer.join()
 
-# pyinstaller -F --icon=Custom-Icon.ico main.py
+# pyinstaller -F --name="FileTypeToFolderType" --icon=Custom-Icon.ico main.py

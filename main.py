@@ -32,26 +32,24 @@ class Handler(FileSystemEventHandler):
             'Файлы проектов и резервных копий': ['prj', 'v2i', 'sis', 'sav', 'bak', 'dmp'],
             'JSON-файлы': ['json']
         }
-        self.folder_track = "/Users/pc/Downloads"
-        self.folder_dest = "/Users/pc/Downloads/Отсортированные файлы"
 
-    # def get_folders(self):
-    #     self.folder_track = self.valid_path(txt='Введите полный путь до "грязной" папки:')
-    #     while not self.folder_track:
-    #         self.folder_track = self.valid_path(
-    #             txt='Данный путь не существует в системе, введите корректный путь до "грязной" папки:')
-    #
-    #     self.folder_dest = self.valid_path(
-    #         txt='Введите полный путь до "чистой" папки(чтобы отсортировать в эту же папку: нажмите enter):')
-    #
-    #     if self.folder_dest == '':
-    #         self.folder_dest = self.folder_track
-    #
-    #     elif not self.folder_dest:
-    #         print("Данного пути не существует")
-    #         while self.folder_dest != '' or self.folder_dest == False:
-    #             self.folder_dest = self.valid_path(
-    #                 txt='Введите полный путь до "чистой" папки(для сортировки в "грязную" папку: нажмите enter):')
+    def get_folders(self):
+        self.folder_track = self.valid_path(txt='Введите полный путь до "грязной" папки:')
+        while not self.folder_track:
+            self.folder_track = self.valid_path(
+                txt='Данный путь не существует в системе, введите корректный путь до "грязной" папки:')
+
+        self.folder_dest = self.valid_path(
+            txt='Введите полный путь до "чистой" папки(чтобы отсортировать в эту же папку: нажмите enter):')
+
+        if self.folder_dest == '':
+            self.folder_dest = self.folder_track
+
+        elif not self.folder_dest:
+            print("Данного пути не существует")
+            while self.folder_dest != '' or self.folder_dest == False:
+                self.folder_dest = self.valid_path(
+                    txt='Введите полный путь до "чистой" папки(для сортировки в "грязную" папку: нажмите enter):')
 
     @classmethod
     def valid_path(cls, txt=''):
@@ -128,7 +126,7 @@ class Handler(FileSystemEventHandler):
 
 def main():
     event_handler = Handler()
-    # event_handler.get_folders()
+    event_handler.get_folders()
     folder_track = event_handler.folder_track
     observer = Observer()
     observer.schedule(event_handler=event_handler, path=folder_track, recursive=True)

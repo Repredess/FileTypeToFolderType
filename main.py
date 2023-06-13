@@ -30,10 +30,12 @@ class Handler(FileSystemEventHandler):
             'Файлы изображений/проектов Photoshop': ['psd'],
             'Шрифты': ['fnt', 'fon', 'otf', 'ttf'],
             'Файлы проектов и резервных копий': ['prj', 'v2i', 'sis', 'sav', 'bak', 'dmp'],
-            'JSON-файлы': ['json']
+            'JSON-файлы': ['json'],
+            'Програмные файлы': ['js', 'py'],
+            'VUE-файлы': ['vue']
         }
 
-    def get_folders(self):
+    def get_path(self):
         self.folder_track = self.valid_path(txt='Введите полный путь до "грязной" папки:')
         while not self.folder_track:
             self.folder_track = self.valid_path(
@@ -51,6 +53,8 @@ class Handler(FileSystemEventHandler):
                 self.folder_dest = self.valid_path(
                     txt='Введите полный путь до "чистой" папки(для сортировки в "грязную" папку: нажмите enter):')
 
+        return self.folder_track, self.folder_dest
+
     @classmethod
     def valid_path(cls, txt=''):
         path = input(f"{txt}\n").lstrip('\\')
@@ -61,7 +65,11 @@ class Handler(FileSystemEventHandler):
         else:
             return False
 
-    def on_modified(self, event):
+    def get_live_datetime(self) -> str:
+        date = str(datetime.datetime.now()).replace(':', '|').replace('.', ',')
+        return date
+
+    def on_any_event(self, event):
         # Проходимся по данным в папке:
         for filename in os.listdir(self.folder_track):
             flag = False
@@ -84,7 +92,7 @@ class Handler(FileSystemEventHandler):
 
                         # Если папка есть и в ней уже есть файл с этим именем:
                         elif os.path.exists(os.path.join(self.folder_dest, key, filename)):
-                            new_filename = f"{filename.split('.')[0]}({str(datetime.datetime.now()).replace('.', '-')})"
+                            new_filename = f"{filename.split('.')[0]}({self.get_live_datetime()})"
 
                             os.rename(os.path.join(self.folder_track, filename),
                                       (os.path.join(self.folder_track, f"{new_filename}.{extension}")))
@@ -108,7 +116,7 @@ class Handler(FileSystemEventHandler):
                     except FileExistsError:
                         continue
     #
-    # def on_any_event(self, event):
+    # def on_modified(self, event):
     #     print(event.event_type, event.src_path)
     #
     # def on_moved(self, event):
@@ -126,18 +134,20 @@ class Handler(FileSystemEventHandler):
 
 def main():
     event_handler = Handler()
-    event_handler.get_folders()
-    folder_track = event_handler.folder_track
+    event_handler.get_path()
+    event_handler.folder_track = folder_track
+    event_handler.folder_dest = folder_dest
     observer = Observer()
     observer.schedule(event_handler=event_handler, path=folder_track, recursive=True)
     observer.start()
     try:
-        test = str(datetime.datetime.now()).replace('.', '-')
+        test = event_handler.get_live_datetime()
         os.mkdir(os.path.join(folder_track, test))
         os.rmdir(os.path.join(folder_track, test))
     except:
         print('Error !!!!!!!!')
-    print('Sort is active')
+    os.system('clear')
+    print(f'Sort is active | {folder_track} -> {folder_dest}')
     while True:
         try:
             time.sleep(1)

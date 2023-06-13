@@ -66,7 +66,7 @@ class Handler(FileSystemEventHandler):
             return False
 
     def get_live_datetime(self) -> str:
-        date = str(datetime.datetime.now()).replace(':', '|').replace('.', ',')
+        date = str(datetime.datetime.now()).replace(':', '_').replace('.', ',')
         return date
 
     def on_any_event(self, event) -> None:

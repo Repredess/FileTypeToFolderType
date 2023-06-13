@@ -135,8 +135,8 @@ class Handler(FileSystemEventHandler):
 def main():
     event_handler = Handler()
     event_handler.get_path()
-    event_handler.folder_track = folder_track
-    event_handler.folder_dest = folder_dest
+    folder_track = event_handler.folder_track
+    folder_dest = event_handler.folder_dest
     observer = Observer()
     observer.schedule(event_handler=event_handler, path=folder_track, recursive=True)
     observer.start()
